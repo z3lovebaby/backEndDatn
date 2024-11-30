@@ -33,4 +33,13 @@ export class GlobalMiddleWare {
       next(new Error("User doesn't exist"));
     }
   }
+  static adminRole(req, res, next) {
+    const user = req.user;
+    console.log("user: ", user);
+    if (user.type !== "admin") {
+      req.errorStatus = 401;
+      next(new Error("Youu are an Unauthorised User"));
+    }
+    next();
+  }
 }

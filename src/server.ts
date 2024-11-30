@@ -5,6 +5,8 @@ import * as cors from "cors";
 import { getEnvironmentVariables } from "./environments/environment";
 import UserRouter from "./routers/UserRouter";
 import ShopeeRouter from "./routers/ShopeeRouter";
+import BannerRouter from "./routers/BannerRouter";
+import QuanLyDonRouter from "./routers/QuanLyDonRouter";
 
 export class Server {
   public app: express.Application = express();
@@ -44,6 +46,8 @@ export class Server {
   setRoutes() {
     this.app.use("/api/user", UserRouter);
     this.app.use("/api/shopee", ShopeeRouter);
+    this.app.use("/api/banner", BannerRouter);
+    this.app.use("/api/quanlydon", QuanLyDonRouter);
   }
 
   error404Handler() {

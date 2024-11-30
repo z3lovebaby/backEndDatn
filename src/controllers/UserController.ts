@@ -126,6 +126,7 @@ export class UserController {
         email: user.email,
         type: user.type,
       };
+      console.log("payload:", payload);
       const access_token = Jwt.jwtSign(payload, user._id);
       const refresh_token = Jwt.jwtSignRF(payload, user._id);
       res.json({

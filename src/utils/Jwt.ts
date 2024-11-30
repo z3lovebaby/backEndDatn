@@ -2,11 +2,11 @@ import * as jwt from "jsonwebtoken";
 import { getEnvironmentVariables } from "../environments/environment";
 import * as crypto from "crypto";
 export class Jwt {
-  static jwtSign(payload, userId, expires_in: string = "20s") {
+  static jwtSign(payload, userId, expires_in: string = "20m") {
     return jwt.sign(payload, getEnvironmentVariables().jwt_secret_key, {
       expiresIn: expires_in,
       audience: userId.toString(),
-      issuer: "technyks.com",
+      issuer: "phunh205165.com",
     });
   }
 
