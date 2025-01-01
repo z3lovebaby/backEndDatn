@@ -2,6 +2,9 @@ import { Jwt } from "./../utils/Jwt";
 import { NodeMailer } from "./../utils/NodeMailer";
 import { Utils } from "./../utils/Utils";
 import User from "../models/User";
+import UserOrder from "../models/UserOrder";
+import OrderShopee from "../models/OrderShopee";
+import LenhRut from "../models/LenhRut";
 
 export class UserController {
   static async signup(req, res, next) {
@@ -198,6 +201,7 @@ export class UserController {
     try {
       const profile = await User.findById(user.aud);
       if (profile) {
+        console.log(profile);
         res.send(profile);
       } else {
         throw new Error("User doesn't exist");
@@ -206,7 +210,48 @@ export class UserController {
       next(e);
     }
   }
+  static async getSoDu(req, res, next) {
+    try {
+      const user = req.user;
 
+      // Tìm UserOrder theo user_id
+      const userOrder = await UserOrder.findOne({ user_id: user.aud });
+      if (!userOrder) {
+        return res.status(404).json({
+          error: "Không tìm thấy thông tin đơn hàng của người dùng.",
+        });
+      }
+      // Lấy danh sách các orderID từ UserOrder
+      const orderIds = userOrder.orders;
+      console.log("o", orderIds);
+      // Tìm các bản ghi OrderShopee tương ứng
+      const orders = await OrderShopee.find({ _id: { $in: orderIds } });
+      let sd = 0;
+      let sdkd = 0;
+      orders.forEach((order) => {
+        sd += order.commission; // Lấy _id của từng đơn hàng
+
+        // Kiểm tra nếu orderId chưa có trong danh sách orders, thì thêm vào
+        if (order.status == "Hoàn thành") {
+          sdkd += order.commission;
+        }
+      });
+      const contracts = await LenhRut.find({ user_id: user.aud });
+      contracts.forEach((con) => {
+        sd -= con.money;
+        sdkd -= con.money;
+      });
+      sd < 0 ? (sd = 0) : (sd = sd);
+      sdkd < 0 ? (sdkd = 0) : (sdkd = sdkd);
+      console.log("sd:", sd, sdkd);
+      res.send({
+        soDu: sd,
+        soDuKhaDung: sdkd,
+      });
+    } catch (e) {
+      next(e);
+    }
+  }
   static async updatePhoneNumber(req, res, next) {
     const user = req.user;
     const phone = req.body.phone;

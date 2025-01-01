@@ -7,7 +7,11 @@ import UserRouter from "./routers/UserRouter";
 import ShopeeRouter from "./routers/ShopeeRouter";
 import BannerRouter from "./routers/BannerRouter";
 import QuanLyDonRouter from "./routers/QuanLyDonRouter";
-
+import BankRouter from "./routers/BankRouter";
+import * as cron from "node-cron";
+import UserOrder from "./models/UserOrder";
+import DealRouter from "./routers/DealRouter";
+import ShopRouter from "./routers/ShopRouter";
 export class Server {
   public app: express.Application = express();
 
@@ -16,8 +20,14 @@ export class Server {
     this.setRoutes();
     this.error404Handler();
     this.handleErrors();
+    this.setCronJobs();
   }
-
+  setCronJobs() {
+    // Lịch trình chạy vào 0h và 12h hàng ngày
+    cron.schedule("0 0,12 * * *", async () => {
+      await UserOrder.resetCounts(); // Giả sử bạn có phương thức resetCounts trong UserOrder
+    });
+  }
   setConfigs() {
     this.connectMongoDB();
     this.allowCors();
@@ -36,7 +46,7 @@ export class Server {
         extended: true,
       })
     );
-    // this.app.use(bodyParser.json());
+    this.app.use(bodyParser.json());
   }
 
   allowCors() {
@@ -44,10 +54,14 @@ export class Server {
   }
 
   setRoutes() {
+    this.app.use("/src/uploads", express.static("src/uploads"));
     this.app.use("/api/user", UserRouter);
     this.app.use("/api/shopee", ShopeeRouter);
     this.app.use("/api/banner", BannerRouter);
     this.app.use("/api/quanlydon", QuanLyDonRouter);
+    this.app.use("/api/bank", BankRouter);
+    this.app.use("/api/deal", DealRouter);
+    this.app.use("/api/shop", ShopRouter);
   }
 
   error404Handler() {

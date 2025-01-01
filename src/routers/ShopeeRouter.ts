@@ -15,11 +15,12 @@ class ShopeeRouter {
   }
 
   getRoutes() {
-    // this.router.get(
-    //   "/send/verification/email",
-    //   GlobalMiddleWare.auth,
-    //   UserController.resendVerificationEmail
-    // );
+    this.router.get(
+      "/get-all-voucher",
+      GlobalMiddleWare.auth,
+      GlobalMiddleWare.checkError,
+      ShopeeController.getAllVoucher
+    );
   }
 
   postRoutes() {
@@ -27,6 +28,18 @@ class ShopeeRouter {
       "/convert",
       GlobalMiddleWare.checkError,
       ShopeeController.convertLink
+    );
+    this.router.post(
+      "/price-history",
+      GlobalMiddleWare.checkError,
+      ShopeeController.getPriceHistory
+    );
+    this.router.post(
+      "/save-cookie",
+      GlobalMiddleWare.checkError,
+      GlobalMiddleWare.auth,
+      GlobalMiddleWare.adminRole,
+      ShopeeController.saveCookie
     );
   }
 

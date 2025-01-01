@@ -20,7 +20,13 @@ class QuanLyDonRouter {
     this.router.get(
       "/orderItems",
       GlobalMiddleWare.auth,
+      GlobalMiddleWare.adminRole,
       QuanLyDonController.getOrderItems
+    );
+    this.router.get(
+      "/all-user-order",
+      GlobalMiddleWare.auth,
+      QuanLyDonController.getUserOrder
     );
   }
 
@@ -33,6 +39,12 @@ class QuanLyDonRouter {
       QuanLyDonValidator.addOrderByFile(),
       GlobalMiddleWare.checkError,
       QuanLyDonController.addOrderByFile
+    );
+    this.router.post(
+      "/sendOrder",
+      GlobalMiddleWare.auth,
+      GlobalMiddleWare.checkError,
+      QuanLyDonController.userAddOrder
     );
   }
 

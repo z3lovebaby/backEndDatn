@@ -1,10 +1,10 @@
 import { GlobalMiddleWare } from "./../middlewares/GlobalMiddleWare";
 import { Router } from "express";
-import { BannerController } from "../controllers/BannerController";
 import { Utils } from "../utils/Utils";
-import { BannerValidators } from "../validators/BannerValidators";
+import { ShopValidators } from "../validators/ShopValidators";
+import { ShopController } from "../controllers/ShopController";
 
-class BannerRouter {
+class ShopRouter {
   public router: Router;
 
   constructor() {
@@ -17,16 +17,7 @@ class BannerRouter {
   }
 
   getRoutes() {
-    // this.router.get(
-    //   "/send/verification/email",
-    //   GlobalMiddleWare.auth,
-    //   UserController.resendVerificationEmail
-    // );
-    this.router.get(
-      "/banners",
-      GlobalMiddleWare.auth,
-      BannerController.getBanners
-    );
+    this.router.get("/shops", GlobalMiddleWare.auth, ShopController.getShops);
   }
 
   postRoutes() {
@@ -34,17 +25,17 @@ class BannerRouter {
       "/create",
       GlobalMiddleWare.auth,
       GlobalMiddleWare.adminRole,
-      new Utils().multer.single("bannerImages"),
-      BannerValidators.addBanner(),
+      new Utils().multer.single("shopImages"),
+      ShopValidators.addShop(),
       GlobalMiddleWare.checkError,
-      BannerController.addBanner
+      ShopController.addShop
     );
     this.router.post(
       "/update/:id",
       GlobalMiddleWare.checkError,
       GlobalMiddleWare.auth,
       GlobalMiddleWare.adminRole,
-      BannerController.updateStatus
+      ShopController.updateStatus
     );
   }
 
@@ -55,4 +46,4 @@ class BannerRouter {
   deleteRoutes() {}
 }
 
-export default new BannerRouter().router;
+export default new ShopRouter().router;

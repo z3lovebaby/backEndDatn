@@ -39,6 +39,7 @@ class UserRouter {
       GlobalMiddleWare.checkError,
       UserController.verifyResetPasswordToken
     );
+    this.router.get("/sodu", GlobalMiddleWare.auth, UserController.getSoDu);
     this.router.get("/profile", GlobalMiddleWare.auth, UserController.profile);
   }
 

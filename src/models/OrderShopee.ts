@@ -8,6 +8,7 @@ interface IOrderShopee extends Document {
   itemId: string;
   productName: string;
   commission: number;
+  user_id: mongoose.Schema.Types.ObjectId | null; // Thêm user_id
 }
 
 const orderShopeeSchema = new Schema({
@@ -18,10 +19,16 @@ const orderShopeeSchema = new Schema({
   itemId: { type: String, required: true },
   productName: { type: String, required: true },
   commission: { type: Number, required: true },
+  user_id: {
+    type: mongoose.Schema.Types.ObjectId, // Kiểu ObjectId để liên kết với User
+    ref: "User", // Liên kết với bảng User
+    default: null, // Mặc định là null
+  },
 });
 
 const OrderShopee = mongoose.model<IOrderShopee>(
   "OrderShopee",
   orderShopeeSchema
 );
+
 export default OrderShopee;
