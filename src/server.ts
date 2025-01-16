@@ -13,6 +13,7 @@ import UserOrder from "./models/UserOrder";
 import DealRouter from "./routers/DealRouter";
 import ShopRouter from "./routers/ShopRouter";
 import HotProductRouter from "./routers/HotProductRouter";
+import User from "./models/User";
 export class Server {
   public app: express.Application = express();
 
@@ -26,7 +27,17 @@ export class Server {
   setCronJobs() {
     // Lịch trình chạy vào 0h và 12h hàng ngày
     cron.schedule("0 0,12 * * *", async () => {
-      await UserOrder.resetCounts(); // Giả sử bạn có phương thức resetCounts trong UserOrder
+      try {
+        // Reset số lượt chơi vòng quay
+        await User.resetLuotQuay();
+        console.log("Cronjob: Đã reset số lượt chơi vòng quay.");
+
+        // Reset số đếm đơn hàng
+        await UserOrder.resetCounts();
+        console.log("Cronjob: Đã reset số đếm đơn hàng.");
+      } catch (err) {
+        console.error("Lỗi khi thực thi cronjob:", err);
+      }
     });
   }
   setConfigs() {

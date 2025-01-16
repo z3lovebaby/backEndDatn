@@ -51,6 +51,12 @@ class UserRouter {
       UserController.signup
     );
     this.router.post(
+      "/vqmm",
+      GlobalMiddleWare.auth,
+      GlobalMiddleWare.checkError,
+      UserController.vqmm
+    );
+    this.router.post(
       "/refresh_token",
       UserValidators.checkRefreshToken(),
       GlobalMiddleWare.checkError,

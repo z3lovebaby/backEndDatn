@@ -243,10 +243,11 @@ export class UserController {
       });
       sd < 0 ? (sd = 0) : (sd = sd);
       sdkd < 0 ? (sdkd = 0) : (sdkd = sdkd);
-      console.log("sd:", sd, sdkd);
+      const _user = await User.findById(user.aud);
+      console.log("go", _user.gift);
       res.send({
-        soDu: sd,
-        soDuKhaDung: sdkd,
+        soDu: sd + _user.gift,
+        soDuKhaDung: sdkd + _user.gift,
       });
     } catch (e) {
       next(e);
@@ -337,6 +338,29 @@ export class UserController {
       }
     } catch (e) {
       req.errorStatus = 403;
+      next(e);
+    }
+  }
+  static async vqmm(req, res, next) {
+    try {
+      const user = req.user;
+      const { gift } = req.body;
+
+      const _user = await User.findById(user.aud);
+
+      if (!_user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      _user.gift += gift;
+      _user.luotQuay = 0;
+
+      await _user.save();
+
+      return res
+        .status(200)
+        .json({ message: "User updated successfully", user: _user });
+    } catch (e) {
       next(e);
     }
   }
