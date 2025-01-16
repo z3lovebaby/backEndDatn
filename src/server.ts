@@ -12,6 +12,7 @@ import * as cron from "node-cron";
 import UserOrder from "./models/UserOrder";
 import DealRouter from "./routers/DealRouter";
 import ShopRouter from "./routers/ShopRouter";
+import HotProductRouter from "./routers/HotProductRouter";
 export class Server {
   public app: express.Application = express();
 
@@ -62,6 +63,7 @@ export class Server {
     this.app.use("/api/bank", BankRouter);
     this.app.use("/api/deal", DealRouter);
     this.app.use("/api/shop", ShopRouter);
+    this.app.use("/api/hotprod", HotProductRouter);
   }
 
   error404Handler() {

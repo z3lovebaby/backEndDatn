@@ -117,17 +117,19 @@ export class ShopeeController {
               product_base_id: prod_id,
             },
           });
-          res.json({
-            dataFE,
-            his: response3.data.data.product_history_data.item_history,
-          });
-        } else {
-          return res
-            .status(404)
-            .json({ error: "Có lỗi xảy ra tại máy chủ, thử lại sau" });
+          if (response3.data.data.product_history_data)
+            return res.json({
+              dataFE,
+              his: response3.data.data.product_history_data.item_history,
+            });
         }
+        return res
+          .status(404)
+          .json({ error: "Price history unavailable for this product" });
       } else {
-        return res.status(404).json({ error: "Could not resolve full link" });
+        return res
+          .status(404)
+          .json({ error: "Error when resolve link at Shopee" });
       }
     } catch (error) {
       console.error("Error resolving link:", error);
@@ -168,12 +170,18 @@ export class ShopeeController {
       const sort = "totalClick,DESC";
       const slugSupplier = "shopee";
       const page = req.query.page;
+      const categoryIds = req.query.catID;
       console.log("test", req.query);
       // Kết hợp giá trị từ body và giá trị mặc định
 
       // Xây dựng URL API
       const baseUrl = "https://portal.piggi.vn/api/voucher";
-      const queryParams = new URLSearchParams({ sort, slugSupplier, page });
+      const queryParams = new URLSearchParams({
+        sort,
+        slugSupplier,
+        page,
+        categoryIds,
+      });
       const apiUrl = `${baseUrl}?${queryParams.toString()}`;
 
       // Cấu hình axios
@@ -199,6 +207,40 @@ export class ShopeeController {
       }
 
       res.status(200).json(vouchers);
+    } catch (error) {
+      console.error("Error fetching vouchers:", error.message);
+      next(error);
+    }
+  }
+  static async getCategory(req, res, next) {
+    try {
+      // Xây dựng URL API
+      const url =
+        "https://portal.piggi.vn/api/voucher-category?pageSize=9999&supplierIds[]=30";
+
+      // Cấu hình axios
+      const config = {
+        method: "get",
+        maxBodyLength: Infinity,
+        url: url,
+        headers: {
+          accept: "*/*",
+          "content-type": "application/json; charset=utf-8",
+          "user-agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+        },
+      };
+
+      // Gửi yêu cầu API
+      const response = await axios.request(config);
+      console.log(response.data);
+      const category = response.data.data;
+
+      // Kiểm tra và trả kết quả
+      if (!category || category.length === 0) {
+        return res.status(404).json({ message: "Empty." });
+      }
+      return res.status(200).json(category);
     } catch (error) {
       console.error("Error fetching vouchers:", error.message);
       next(error);

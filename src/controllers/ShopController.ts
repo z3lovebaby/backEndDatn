@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import Shop from "../models/Shop";
+import { query } from "express-validator";
 export class ShopController {
   static async addShop(req, res, next) {
     try {
@@ -35,8 +36,27 @@ export class ShopController {
 
   static async getShops(req, res, next) {
     try {
-      const shops = await Shop.find();
+      let shops;
+      const user = req.user;
+      if (user.type == "admin") shops = await Shop.find();
+      else shops = await Shop.find({ status: true });
       res.send(shops);
+    } catch (e) {
+      next(e);
+    }
+  }
+  static async getShopByID(req, res, next) {
+    try {
+      const { shopId } = req.query;
+      console.log("pppp", req.query);
+      console.log("aâ", shopId);
+      let shop = await Shop.findOne({ _id: shopId });
+      console.log(shop);
+      if (!shop) {
+        return res.status(404).json({ message: "Lấy dữ liệu shop bị lỗi" });
+      }
+
+      res.status(200).json(shop);
     } catch (e) {
       next(e);
     }

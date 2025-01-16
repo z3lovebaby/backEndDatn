@@ -21,6 +21,12 @@ class ShopeeRouter {
       GlobalMiddleWare.checkError,
       ShopeeController.getAllVoucher
     );
+    this.router.get(
+      "/get-category-voucher",
+      GlobalMiddleWare.auth,
+      GlobalMiddleWare.checkError,
+      ShopeeController.getCategory
+    );
   }
 
   postRoutes() {

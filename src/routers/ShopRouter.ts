@@ -17,6 +17,12 @@ class ShopRouter {
   }
 
   getRoutes() {
+    this.router.get(
+      "/get-shop",
+      GlobalMiddleWare.auth,
+      ShopController.getShopByID
+    );
+
     this.router.get("/shops", GlobalMiddleWare.auth, ShopController.getShops);
   }
 

@@ -18,7 +18,10 @@ export class BannerController {
 
   static async getBanners(req, res, next) {
     try {
-      const banners = await Banner.find();
+      let banners;
+      let user = req.user;
+      if (user.type == "admin") banners = await Banner.find();
+      else banners = await Banner.find({ status: true });
       res.send(banners);
     } catch (e) {
       next(e);
